@@ -1,8 +1,8 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import weatherReducer from "./reducer";
 
 export const store = configureStore({
-  reducer: {
-  },
+  reducer: weatherReducer,
 });
 
 export type AppDispatch = typeof store.dispatch;

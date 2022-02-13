@@ -4,7 +4,7 @@ export interface Coord {
 }
 
 export interface City {
-  _id: number;
+  id: number;
   value: string;
   country: string;
   coord: Coord;
@@ -20,6 +20,11 @@ export interface WeatherInfo {
     id: number;
     main: string;
   }>;
+}
+
+export interface GetWeatherParams {
+  coord: Coord;
+  id: number;
 }
 
 export type WeatherState = {

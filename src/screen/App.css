@@ -15,6 +15,10 @@
   width: 80vh;
 }
 
+.margin-top-50 {
+  margin-top: 50px;
+}
+
 .margin-autocomplete {
   min-width: 50%;
   margin: 24px 0;

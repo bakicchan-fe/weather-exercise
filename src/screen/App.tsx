@@ -1,22 +1,26 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import "./App.css";
-import { AutoComplete } from "antd";
+import { AutoComplete, Empty } from "antd";
 import { lowerCaseText } from "../utils";
-import { City, WeatherInfo } from "../types";
+import { City, GetWeatherParams, WeatherInfo } from "../types";
 import { connect } from "react-redux";
 import { RootState } from "../app/store";
-import { deleteRecord, retrieveWeather, storeWeather } from "../app/actions";
+import { editRecord, deleteRecord, retrieveWeather } from "../app/actions";
 import WeatherInfoRow from "../component/WeatherInfoRow";
-import { WeatherIcon } from "weather-react-icons";
 
 interface AppProps {
   weatherData: Array<WeatherInfo>;
-  storeWeather: (payload: any) => void;
   deleteRecord: (id: number) => void;
-  retrieveWeather: (params: any) => void;
+  retrieveWeather: (params: GetWeatherParams) => void;
+  editRecord: (params: GetWeatherParams) => void;
 }
 
-const App = ({ weatherData, retrieveWeather, deleteRecord }: AppProps) => {
+const App = ({
+  weatherData,
+  retrieveWeather,
+  editRecord,
+  deleteRecord,
+}: AppProps) => {
   const cities = require("../data/cities.json");
 
   const [value, setValue] = useState<string>();
@@ -25,6 +29,7 @@ const App = ({ weatherData, retrieveWeather, deleteRecord }: AppProps) => {
   useEffect(() => {
     // TODO: eliminare qui dall'array di città quelle già selezionate
     setCityOptions(cities);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weatherData]);
 
   const onSearchText = useCallback(
@@ -40,18 +45,36 @@ const App = ({ weatherData, retrieveWeather, deleteRecord }: AppProps) => {
 
   const getWeatherData = useCallback(
     (value: string, option: City) => {
-      const { coord } = option;
+      const { coord, id } = option;
 
-      retrieveWeather(coord);
+      const params = { coord, id };
+
+      retrieveWeather(params);
     },
     [retrieveWeather]
   );
+
+  const renderList = useMemo(() => {
+    if (weatherData.length === 0) {
+      return <Empty className="margin-top-50" />;
+    } else {
+      return weatherData.map((weatherInfo: WeatherInfo) => (
+        <>
+          <WeatherInfoRow
+            key={weatherInfo.id}
+            weatherInfo={weatherInfo}
+            deleteRecord={deleteRecord}
+            editRecord={editRecord}
+          />
+        </>
+      ));
+    }
+  }, [deleteRecord, editRecord, weatherData]);
 
   return (
     <div className="container">
       <header className="header">
         <h1>Weather Info</h1>
-        <WeatherIcon iconId={711} name="owm" />
       </header>
       <div className="options-container">
         <AutoComplete
@@ -67,14 +90,7 @@ const App = ({ weatherData, retrieveWeather, deleteRecord }: AppProps) => {
           onChange={setValue}
           onSearch={onSearchText}
         />
-        {weatherData.map((weatherInfo: WeatherInfo) => (
-          <>
-            <WeatherInfoRow
-              weatherInfo={weatherInfo}
-              deleteRecord={deleteRecord}
-            />
-          </>
-        ))}
+        {renderList}
       </div>
     </div>
   );
@@ -84,6 +100,6 @@ const mapStateToProps = ({ weatherData }: RootState) => ({
   weatherData,
 });
 
-const mapDispatchToProps = { retrieveWeather, storeWeather, deleteRecord };
+const mapDispatchToProps = { retrieveWeather, editRecord, deleteRecord };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

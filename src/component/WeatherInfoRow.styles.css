@@ -9,3 +9,8 @@
 .margin-top-10 {
   margin-top: 10px;
 }
+
+.error-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}

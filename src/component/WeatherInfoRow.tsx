@@ -1,6 +1,10 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useMemo } from "react";
 import { Divider, Image, Row, Col, message } from "antd";
-import { ReloadOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  ReloadOutlined,
+  CloseOutlined,
+  QuestionOutlined,
+} from "@ant-design/icons";
 import { GetWeatherParams, WeatherInfo } from "../types";
 import "./WeatherInfoRow.styles.css";
 
@@ -13,24 +17,52 @@ interface WeatherInfoRowProps {
 const WeatherInfoRow = memo(
   ({ weatherInfo, editRecord, deleteRecord }: WeatherInfoRowProps) => {
     const { value, id, weather, coord } = weatherInfo;
-    const { description, icon } = weather[0];
 
     const [spin, setSpin] = useState(false);
 
     const onReloadClick = useCallback(() => {
-      editRecord({ coord, id });
+      editRecord({ coord, id, value });
       setSpin(true);
 
       setTimeout(() => {
         setSpin(false);
-        message.success("Reload complete!");
+        if (weatherInfo.error) {
+          message.warning(`Unable to reload data of ${value}`);
+        } else {
+          message.success("Reload complete!");
+        }
       }, 1000);
-    }, [coord, editRecord, id]);
+    }, [coord, editRecord, id, value, weatherInfo.error]);
 
     const onDeleteClick = useCallback(() => {
       deleteRecord(id);
       message.success("City deleted!");
     }, [deleteRecord, id]);
+
+    const renderWeatherInfo = useMemo(() => {
+      if (weatherInfo.error) {
+        return (
+          <Col span={12}>
+            <QuestionOutlined className="error-icon" />
+            <p>Unable to fetch data</p>
+          </Col>
+        );
+      } else {
+        const { icon, description } = weather[0];
+        return (
+          <Col span={12}>
+            <Image
+              alt={description}
+              src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
+              width={40}
+              height={40}
+              preview={false}
+            />
+            <p>{weather[0].description}</p>
+          </Col>
+        );
+      }
+    }, [weather, weatherInfo.error]);
 
     return (
       <Row align="middle" justify="space-between" key={id}>
@@ -38,16 +70,7 @@ const WeatherInfoRow = memo(
           <h3>{value}</h3>
         </Col>
 
-        <Col span={12}>
-          <Image
-            alt={description}
-            src={`http://openweathermap.org/img/wn/${icon}@2x.png`}
-            width={40}
-            height={40}
-            preview={false}
-          />
-          <p>{description}</p>
-        </Col>
+        {renderWeatherInfo}
 
         <Col>
           <ReloadOutlined

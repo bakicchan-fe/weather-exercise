@@ -47,7 +47,7 @@ const App = ({
     (value: string, option: City) => {
       const { coord, id } = option;
 
-      const params = { coord, id };
+      const params = { coord, id, value };
 
       retrieveWeather(params);
     },

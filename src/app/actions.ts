@@ -1,4 +1,4 @@
-import { GetWeatherParams, WeatherInfo } from "../types";
+import { GetWeatherParams } from "../types";
 import { processApiCall } from "../utils";
 import { getWeatherApi } from "./api";
 

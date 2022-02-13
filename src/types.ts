@@ -20,11 +20,13 @@ export interface WeatherInfo {
     id: number;
     main: string;
   }>;
+  error?: boolean;
 }
 
 export interface GetWeatherParams {
   coord: Coord;
   id: number;
+  value: string;
 }
 
 export type WeatherState = {

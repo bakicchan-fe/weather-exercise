@@ -1,26 +1,31 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import "./App.css";
-import { AutoComplete, Input } from "antd";
-import { lowerCaseText, makeUrl } from "../utils";
+import { AutoComplete } from "antd";
+import { lowerCaseText } from "../utils";
 import { City, WeatherInfo } from "../types";
-import { ReloadOutlined, CloseOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import { RootState } from "../app/store";
-import axios from "axios";
-import { deleteRecord, storeWeather } from "../app/actions";
+import { deleteRecord, retrieveWeather, storeWeather } from "../app/actions";
+import WeatherInfoRow from "../component/WeatherInfoRow";
+import { WeatherIcon } from "weather-react-icons";
 
 interface AppProps {
   weatherData: Array<WeatherInfo>;
   storeWeather: (payload: any) => void;
   deleteRecord: (id: number) => void;
+  retrieveWeather: (params: any) => void;
 }
 
-const App = ({ weatherData, storeWeather, deleteRecord }: AppProps) => {
+const App = ({ weatherData, retrieveWeather, deleteRecord }: AppProps) => {
   const cities = require("../data/cities.json");
 
   const [value, setValue] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
   const [cityOptions, setCityOptions] = useState(cities);
+
+  useEffect(() => {
+    // TODO: eliminare qui dall'array di città quelle già selezionate
+    setCityOptions(cities);
+  }, [weatherData]);
 
   const onSearchText = useCallback(
     (text: string) => {
@@ -34,49 +39,41 @@ const App = ({ weatherData, storeWeather, deleteRecord }: AppProps) => {
   );
 
   const getWeatherData = useCallback(
-    async (value: string, option: City) => {
+    (value: string, option: City) => {
       const { coord } = option;
 
-      return await axios
-        .get(makeUrl(coord.lat, coord.lon))
-        .then((res) => {
-          const { id, coord, name } = res.data;
-          storeWeather({ id, coord, name });
-        })
-        .catch((e) => console.log(e));
+      retrieveWeather(coord);
     },
-    [storeWeather]
+    [retrieveWeather]
   );
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Weather</h1>
+    <div className="container">
+      <header className="header">
+        <h1>Weather Info</h1>
+        <WeatherIcon iconId={711} name="owm" />
       </header>
       <div className="options-container">
         <AutoComplete
           allowClear
-          placeholder="Choose a city"
+          placeholder="Write or choose a city"
           options={cityOptions}
           value={value}
-          style={{ width: 200 }}
-          onSelect={getWeatherData}
+          className="margin-autocomplete"
+          onSelect={(value: string, option: City) => {
+            getWeatherData(value, option);
+            setValue("");
+          }}
           onChange={setValue}
           onSearch={onSearchText}
         />
-        {weatherData.map((weatherCity: WeatherInfo) => (
-          <Input
-            value={weatherCity.name}
-            suffix={
-              <>
-                <ReloadOutlined
-                  spin={loading}
-                  onClick={() => setLoading(!loading)}
-                />
-                <CloseOutlined onClick={() => deleteRecord(weatherCity.id)} />
-              </>
-            }
-          />
+        {weatherData.map((weatherInfo: WeatherInfo) => (
+          <>
+            <WeatherInfoRow
+              weatherInfo={weatherInfo}
+              deleteRecord={deleteRecord}
+            />
+          </>
         ))}
       </div>
     </div>
@@ -87,6 +84,6 @@ const mapStateToProps = ({ weatherData }: RootState) => ({
   weatherData,
 });
 
-const mapDispatchToProps = { storeWeather, deleteRecord };
+const mapDispatchToProps = { retrieveWeather, storeWeather, deleteRecord };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

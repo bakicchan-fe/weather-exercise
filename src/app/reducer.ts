@@ -7,7 +7,6 @@ const initialState: WeatherState = {
 
 const weatherReducer = (state = initialState, action: any) => {
   const { type, payload } = action;
-  console.log(payload);
   switch (type) {
     case STORE_WEATHER:
       return {

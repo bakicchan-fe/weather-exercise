@@ -12,7 +12,7 @@ export interface City {
 
 export interface WeatherInfo {
   id: number;
-  name: string;
+  value: string;
   coord: Coord;
   weather: Array<{
     description: string;

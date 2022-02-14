@@ -26,3 +26,13 @@ header {
   min-width: 50%;
   margin: 24px 0;
 }
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 70vh;
+  }
+  .options-container {
+    margin: 0;
+    width: 100%;
+  }
+}

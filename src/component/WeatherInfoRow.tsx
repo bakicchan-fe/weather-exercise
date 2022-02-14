@@ -26,13 +26,8 @@ const WeatherInfoRow = memo(
 
       setTimeout(() => {
         setSpin(false);
-        if (weatherInfo.error) {
-          message.warning(`Unable to reload data of ${value}`);
-        } else {
-          message.success("Reload complete!");
-        }
       }, 1000);
-    }, [coord, editRecord, id, value, weatherInfo.error]);
+    }, [coord, editRecord, id, value]);
 
     const onDeleteClick = useCallback(() => {
       deleteRecord(id);
@@ -65,7 +60,12 @@ const WeatherInfoRow = memo(
     }, [weather, weatherInfo.error]);
 
     return (
-      <Row align="middle" justify="space-between" key={id}>
+      <Row
+        align="middle"
+        justify="space-between"
+        key={id}
+        className="row-margin"
+      >
         <Col span={4}>
           <h3>{value}</h3>
         </Col>

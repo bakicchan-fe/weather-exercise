@@ -10,6 +10,10 @@
   margin-top: 10px;
 }
 
+.row-margin {
+  margin: 0 24px;
+}
+
 .error-icon {
   font-size: 32px;
   margin-bottom: 8px;

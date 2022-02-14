@@ -24,11 +24,17 @@ const App = ({
   const cities = require("../data/cities.json");
 
   const [value, setValue] = useState<string>();
-  const [cityOptions, setCityOptions] = useState(cities);
+  const [cityOptions, setCityOptions] = useState<City[]>([]);
 
   useEffect(() => {
-    // TODO: eliminare qui dall'array di città quelle già selezionate
-    setCityOptions(cities);
+    if (weatherData.length > 0) {
+      const filteredList = cities.filter((city: any) => {
+        return !weatherData.find((data) => data.id === city.id);
+      });
+      setCityOptions(filteredList);
+    } else {
+      setCityOptions(cities);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weatherData]);
 
@@ -71,6 +77,11 @@ const App = ({
     }
   }, [deleteRecord, editRecord, weatherData]);
 
+  const disabledAutocomplete = useMemo(
+    () => cityOptions.length === 0,
+    [cityOptions.length]
+  );
+
   return (
     <div className="container">
       <header className="header">
@@ -78,8 +89,13 @@ const App = ({
       </header>
       <div className="options-container">
         <AutoComplete
+          disabled={disabledAutocomplete}
           allowClear
-          placeholder="Write or choose a city"
+          placeholder={
+            disabledAutocomplete
+              ? "No city available"
+              : "Write or choose a city"
+          }
           options={cityOptions}
           value={value}
           className="margin-autocomplete"

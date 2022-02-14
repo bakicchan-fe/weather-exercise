@@ -11,7 +11,7 @@ const weatherReducer = (state = initialState, action: any) => {
     case STORE_WEATHER:
       return {
         ...state,
-        weatherData: [...state.weatherData, payload],
+        weatherData: [payload, ...state.weatherData],
       };
     case EDIT_RECORD:
       const indexToEdit = state.weatherData.findIndex(

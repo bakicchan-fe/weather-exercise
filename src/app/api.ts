@@ -7,7 +7,7 @@ export const getWeatherApi = async (params: GetWeatherParams) => {
   return await axios
     .get(makeUrl(coord.lat, coord.lon))
     .then((response) => {
-      const { id, coord, weather, name: value } = response.data;
+      const { coord, weather, name: value } = response.data;
       return { id, coord, weather, value };
     })
     .catch((error) => {

@@ -18,3 +18,9 @@
   font-size: 32px;
   margin-bottom: 8px;
 }
+
+@media only screen and (max-width: 480px) {
+  .row-margin {
+    margin: 0;
+  }
+}

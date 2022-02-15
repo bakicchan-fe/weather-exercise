@@ -65,21 +65,20 @@ const App = ({
       return <Empty className="margin-top-50" />;
     } else {
       return weatherData.map((weatherInfo: WeatherInfo) => (
-        <>
+        <div key={weatherInfo.id}>
           <WeatherInfoRow
-            key={weatherInfo.id}
             weatherInfo={weatherInfo}
             deleteRecord={deleteRecord}
             editRecord={editRecord}
           />
-        </>
+        </div>
       ));
     }
   }, [deleteRecord, editRecord, weatherData]);
 
   const disabledAutocomplete = useMemo(
-    () => cityOptions.length === 0,
-    [cityOptions.length]
+    () => weatherData.length === cities.length,
+    [cities.length, weatherData.length]
   );
 
   return (
@@ -98,7 +97,7 @@ const App = ({
           }
           options={cityOptions}
           value={value}
-          className="margin-autocomplete"
+          className="autocomplete"
           onSelect={(value: string, option: City) => {
             getWeatherData(value, option);
             setValue("");

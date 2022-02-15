@@ -22,17 +22,17 @@ header {
   margin-top: 50px;
 }
 
-.margin-autocomplete {
+.autocomplete {
   min-width: 50%;
   margin: 24px 0;
 }
 
-@media screen and (max-width: 600px) {
+@media only screen and (max-width: 480px) {
   .container {
-    width: 70vh;
+    width: 65vh;
   }
   .options-container {
-    margin: 0;
-    width: 100%;
+    width: 80%;
+    margin: 0 auto;
   }
 }

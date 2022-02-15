@@ -60,12 +60,7 @@ const WeatherInfoRow = memo(
     }, [weather, weatherInfo.error]);
 
     return (
-      <Row
-        align="middle"
-        justify="space-between"
-        key={id}
-        className="row-margin"
-      >
+      <Row align="middle" justify="space-between" className="row-margin">
         <Col span={4}>
           <h3>{value}</h3>
         </Col>
